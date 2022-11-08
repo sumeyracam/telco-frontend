@@ -1,0 +1,113 @@
+<div class="container">
+  <div class="row mt-5" *ngIf="customerId % 2 === 1">
+    <div class="col-lg-4" >
+      <div class="card mb-4" *ngFor="let item of individualCustomer">
+        <div class="card-body text-center">
+          <img src="assets/images/img_avatar.png" alt="avatar" width="auto"
+            class="rounded-circle img-fluid" style="width: 150px;">
+          <h5 class="my-3">{{item.firstName}} {{item.lastName}}</h5>
+          <p class="text-muted mb-1">Birthday</p>
+          <p class="text-muted mb-4">{{item.dateOfBirth}}</p>
+          <div class="d-flex justify-content-center mb-2">
+          </div>
+        </div>
+      </div>
+      </div>
+      <div class="col-lg-8 mt-5" >
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="row" *ngFor="let item of individualCustomer">
+              <div class="col-sm">
+                <p class="mb-0">National Identity</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">{{item.nationalIdentity}}</p>
+              </div>
+            </div>
+            <hr>
+            <div class="row" *ngFor="let item of individualCustomer">
+              <div class="col-sm">
+                <p class="mb-0">Full Name</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">{{item.firstName}} {{item.lastName}}</p>
+              </div>
+            </div>
+            <hr>
+            <div class="row" *ngFor="let item of filteredService">
+              <div class="col-sm">
+                <p class="mb-0">Servisler</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">{{item.name}}</p>
+              </div>
+            </div>
+            <hr>
+            <div class="row" *ngFor="let item of subscription">
+              <div class="col-sm">
+                <p class="mb-0">Abonelik Başlangıç Tarihi</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">{{item.dateStarted | date:"dd-MM-YYYY"}}</p>
+              </div>
+            </div>
+            </div>
+            <button class="btn btn-light mt-3">Yeni Sipariş Başlat</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-5" *ngIf="customerId % 2 === 0">
+        <div class="col-lg-4" >
+          <div class="card mb-4" *ngFor="let item of corporateCustomer">
+            <div class="card-body text-center">
+              <img src="assets/images/img_avatar.png" alt="avatar" width="auto"
+                class="rounded-circle img-fluid" style="width: 150px;">
+              <h5 class="my-3">{{item.companyName}}</h5>
+              <p class="text-muted mb-1">Tax Number</p>
+              <p class="text-muted mb-4">{{item.taxNumber}}</p>
+              <div class="d-flex justify-content-center mb-2">
+              </div>
+            </div>
+          </div>
+          </div>
+          <div class="col-lg-8 mt-5" >
+            <div class="card mb-4">
+              <div class="card-body">
+                <div class="row" *ngFor="let item of corporateCustomer">
+                  <div class="col-sm">
+                    <p class="mb-0">Company Name</p>
+                  </div>
+                  <div class="col-sm-9">
+                    <p class="text-muted mb-0">{{item.companyName}}</p>
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-sm">
+                    <p class="mb-0">Abone olduğu Servisler</p>
+                  </div>
+                  <div class="col-sm-9">
+                    <div *ngFor="let item of filteredService">
+                      <p class="text-muted mb-0">({{item.id}})-{{item.name}}</p>
+                    </div>
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-sm">
+                    <p class="mb-0">Abonelik Başlangıç Tarihi</p>
+                  </div>
+                  <div class="col-sm-9">
+                    <div *ngFor="let item of subscription">
+                      <p class="text-muted mb-0">{{item.serviceId}} numaralı servise abone olduğu tarih: {{item.dateStarted | date:"dd-MM-YYYY"}}</p>
+                    </div>
+                  </div>
+                </div>
+                </div>
+                <button class="btn btn-light mt-3">Yeni Sipariş Başlat</button>
+              </div>
+            </div>
+          </div>
+
+</div>
