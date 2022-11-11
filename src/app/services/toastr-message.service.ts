@@ -14,4 +14,7 @@ export class ToastrMessageService {
   error(title:string,message:string){
     this.toastr.error(title,message);
   }
+  info(title:string,message:string){
+    this.toastr.info(title,message);
+  }
 }

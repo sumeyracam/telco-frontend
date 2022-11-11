@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { environment } from 'src/environments/environment';
-import { setCreateIndividualCustomerModel } from '../store/customer/customer.actions';
+import { setCreateIndividualCustomerModel } from '../store/customerToRegister/customer.actions';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +18,7 @@ export class IndividualCustomersService  {
 
   constructor(private httpClient: HttpClient, private store: Store<AppStoreState>) {
 
-    this.individualCustomerModel$ = this.store.select(
+    this.individualCustomerModel$ = this.store.select( //Store'dan individualCustomerModel'ı alıyoruz
       (state) => state.customer.individualCustomerModel
     );
   }
@@ -29,7 +29,7 @@ export class IndividualCustomersService  {
 
 
 
-  createCustomer(individualCustomer: IndividualCustomers): Observable<IndividualCustomers> {
+  createCustomer(individualCustomer: IndividualCustomers) {
     return this.httpClient.post<IndividualCustomers>(this.controllerUrl, individualCustomer);
   }
 

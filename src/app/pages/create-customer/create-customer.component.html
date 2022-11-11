@@ -1,4 +1,4 @@
-<section class="vh-100 gradient-custom">
+<section class="gradient-custom">
   <div class="container py-5 h-100">
     <div class="row justify-content-center align-items-center h-100">
       <div class="col-12 col-lg-9 col-xl-7">
@@ -10,32 +10,40 @@
             <div class="col-md-12 mb-4 d-flex justify-content-center" *ngIf="!servicesForm">
               <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="inlineRadioOptions" id="individualCustomer"
-                  (click)="clickCustomerOption(true)" [checked]="isChecked" />
-                <label class="form-check-label" for="femaleGender">Individual Customers {{ isChecked }}
+                  (click)="clickCustomerOption(true)" [checked]="isIndividual" />
+                <label class="form-check-label" for="femaleGender">Individual Customers
                 </label>
               </div>
               <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="inlineRadioOptions" id="corporateCustomers"
-                  value="corporateCustomers" (click)="clickCustomerOption(false)" [checked]="!isChecked" />
+                  value="corporateCustomers" (click)="clickCustomerOption(false)" [checked]="!isIndividual" />
                 <label class="form-check-label" for="otherGender">Corporate Customers
                 </label>
               </div>
             </div>
-            <form *ngIf="isChecked && !servicesForm" [formGroup]="createIndividualCustomer">
+            <div style="display: flex; justify-content: center;">
+              <img class="card-img" src="assets/images/createCustomer.png" alt="create-customer-image" width="500" height="300"/>
+            </div>
+            <form *ngIf="isIndividual && !servicesForm" [formGroup]="createIndividualCustomer">
               <div class="row">
                 <div class="col-md-12 mb-4">
-                  <label class="form-label" for="customerId">CustomerID</label>
+                  <label class="form-label" for="nationalIdentity">National Identity</label>
                   <div class="form-outline">
-                    <input type="text" id="customerId" class="form-control form-control-lg"
-                      formControlName="customerId" />
+                    <input type="text" id="nationalIdentity" class="form-control form-control-lg"
+                      formControlName="nationalIdentity" maxlength="11"/>
                     <div *ngIf="
-                      createIndividualCustomer.get('customerId')?.hasError('required') &&
+                      createIndividualCustomer.get('nationalIdentity')?.hasError('required') &&
                       (createIndividualCustomer.dirty || createIndividualCustomer.touched)
                     " class="alert alert-danger" role="alert">
-                      CustomerID is required
+                      National Identity is required
+                    </div>
+                    <div *ngIf="
+                      createIndividualCustomer.get('nationalIdentity')?.hasError('minlength') &&
+                      (createIndividualCustomer.dirty || createIndividualCustomer.touched)
+                    " class="alert alert-danger" role="alert">
+                      National Identity minimum length must be 11 digits
                     </div>
                   </div>
-
                 </div>
               </div>
               <div class="row">
@@ -65,34 +73,6 @@
                   </div>
                 </div>
               </div>
-
-              <div class="row">
-                <div class="col-md-12 mb-4">
-                  <label class="form-label" for="nationalIdentity">National Identity</label>
-                  <div class="form-outline">
-                    <input type="text" id="nationalIdentity" class="form-control form-control-lg"
-                      formControlName="nationalIdentity" />
-                    <div *ngIf="
-                      createIndividualCustomer.get('nationalIdentity')?.hasError('required') &&
-                      (createIndividualCustomer.dirty || createIndividualCustomer.touched)
-                    " class="alert alert-danger" role="alert">
-                      National Identity is required
-                    </div>
-                    <div *ngIf="
-                      createIndividualCustomer.get('nationalIdentity')?.hasError('minlength') &&
-                      (createIndividualCustomer.dirty || createIndividualCustomer.touched)
-                    " class="alert alert-danger" role="alert">
-                      National Identity length must be minimum 11 character
-                    </div>
-                    <div *ngIf="
-                      createIndividualCustomer.get('nationalIdentity')?.hasError('maxlength') &&
-                      (createIndividualCustomer.dirty || createIndividualCustomer.touched)
-                    " class="alert alert-danger" role="alert">
-                      National Identity length must be maximum 11 character
-                    </div>
-                  </div>
-                </div>
-              </div>
               <div class="row">
                 <div class="col-md-12 mb-4">
                   <label class="form-label" for="dateOfBirth">Birthday</label>
@@ -109,22 +89,7 @@
                 </div>
               </div>
             </form>
-            <form *ngIf="!isChecked && !servicesForm" [formGroup]="createCorporateCustomer">
-              <div class="row">
-                <div class="col-md-12 mb-4">
-                  <label class="form-label" for="customerId">CustomerID</label>
-                  <div class="form-outline">
-                    <input type="text" id="customerId" class="form-control form-control-lg"
-                      formControlName="customerId" />
-                    <div *ngIf="
-                      createCorporateCustomer.get('customerId')?.hasError('required') &&
-                      (createCorporateCustomer.dirty || createCorporateCustomer.touched)
-                    " class="alert alert-danger" role="alert">
-                      ustomerId is required
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <form *ngIf="!isIndividual && !servicesForm" [formGroup]="createCorporateCustomer">
               <div class="row">
                 <div class="col-md-6 mb-4">
                   <label class="form-label" for="companyName">Company Name</label>
@@ -161,128 +126,8 @@
                 </div>
               </div>
             </form>
-
-            <div *ngIf="servicesForm && stepCount === 1">
-              <hr class="solid">
-              <form [formGroup]="serviceForm">
-                <div class="row">
-                  <div class="col-lg-6" *ngFor="let service of services">
-                    <label class="services">{{service.name}}
-                      <input type="checkbox" formArrayName="selectedServices" [value]="service.name"
-                        (change)="onCheckboxChange($event)" />
-                      <span class="checkmark"></span>
-                    </label>
-                  </div>
-                </div>
-              </form>
-            </div>
-
-            <div *ngIf="stepCount === 2">
-              <div *ngIf="isChecked">
-                <div class="row">
-                  <div class="col-lg-12" >
-                    <div class="card mb-4">
-                      <div class="card-body">
-                        <div class="row">
-                          <div class="col-sm">
-                            <p class="mb-0">Customer ID</p>
-                          </div>
-                          <div class="col-sm-9">
-                            <p class="text-muted mb-0">{{createIndividualCustomer.value.customerId}}</p>
-                          </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                          <div class="col-sm">
-                            <p class="mb-0">National Identity</p>
-                          </div>
-                          <div class="col-sm-9">
-                            <p class="text-muted mb-0">{{createIndividualCustomer.value.nationalIdentity}}</p>
-                          </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                          <div class="col-sm">
-                            <p class="mb-0">Full Name</p>
-                          </div>
-                          <div class="col-sm-9">
-                            <p class="text-muted mb-0">{{createIndividualCustomer.value.firstName}} {{createIndividualCustomer.value.lastName}}</p>
-                          </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                          <div class="col-sm">
-                            <p class="mb-0">Birthday</p>
-                          </div>
-                          <div class="col-sm-9">
-                            <p class="text-muted mb-0">{{createIndividualCustomer.value.dateOfBirth | date:'dd.MM.YYYY'}}</p>
-                          </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                          <div class="col-sm">
-                            <p class="mb-0">Servisler</p>
-                          </div>
-                          <div class="col-sm-9">
-                            <p class="text-muted mb-0">{{serviceForm.value.selectedServices}}</p>
-                          </div>
-                        </div>
-                        </div>
-                      </div>
-                    </div>
-                </div>
-              </div>
-              <div *ngIf="!isChecked">
-                  <div class="row">
-                    <div class="col-lg-12" >
-                      <div class="card mb-4">
-                        <div class="card-body">
-                          <div class="row">
-                            <div class="col-sm">
-                              <p class="mb-0">Customer ID</p>
-                            </div>
-                            <div class="col-sm-9">
-                              <p class="text-muted mb-0">{{createCorporateCustomer.value.customerId}}</p>
-                            </div>
-                          </div>
-                          <hr>
-                          <div class="row">
-                            <div class="col-sm">
-                              <p class="mb-0">Company Name</p>
-                            </div>
-                            <div class="col-sm-9">
-                              <p class="text-muted mb-0">{{createCorporateCustomer.value.companyName}}</p>
-                            </div>
-                          </div>
-                          <hr>
-                          <div class="row">
-                            <div class="col-sm">
-                              <p class="mb-0">Tax Number</p>
-                            </div>
-                            <div class="col-sm-9">
-                              <p class="text-muted mb-0">{{createCorporateCustomer.value.taxNumber}}</p>
-                            </div>
-                          </div>
-                          <hr>
-                          <div class="row">
-                            <div class="col-sm">
-                              <p class="mb-0">Servisler</p>
-                            </div>
-                            <div class="col-sm-9">
-                              <p class="text-muted mb-0">{{serviceForm.value.selectedServices}}</p>
-                            </div>
-                          </div>
-                          </div>
-                        </div>
-                      </div>
-                  </div>
-              </div>
-            </div>
-            <div class="mt-4 pt-2" *ngIf="stepCount < 2">
-              <button class="btn btn-primary btn-lg" (click)="goNextForm()">Next</button>
-            </div>
-            <div class="mt-4 pt-2" *ngIf="stepCount === 2">
-              <button class="btn btn-primary btn-lg" (click)="saveCustomer()" >Save</button>
+            <div class="mt-4 pt-2" style=" float:right;">
+              <button class="btn btn-success btn-lg" (click)="goNextForm()">Next</button>
             </div>
           </div>
         </div>

@@ -22,7 +22,13 @@ export class LocalStorageService {
       localStorage.setItem("isLogin","true");
       this.isUserLoggedIn.next(true);
     }
+
   }
+
+  remove(key: string) {
+    localStorage.removeItem(key);
+  }
+  
   logout() {
     this.isUserLoggedIn.next(false);
     localStorage.setItem("isLogin","false");

@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LoadingService } from 'src/app/services/loading.service';
 import { Service } from 'src/app/models/service';
 import { ServicesService } from 'src/app/services/services.service';
+import { ToastrMessageService } from 'src/app/services/toastr-message.service';
 
 @Component({
   selector: 'app-cards',
@@ -22,7 +23,8 @@ export class CardsComponent implements OnInit {
   constructor(
     private servicesService: ServicesService,
     private formBuilder: FormBuilder,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    private toastrService:ToastrMessageService
   ) {}
 
   ngOnInit(): void {
@@ -39,7 +41,7 @@ export class CardsComponent implements OnInit {
         //Observer design pattern
         this.services = response;
       });
-    }, 1000);
+    }, 500);
   }
 
   edit(service: Service) {
@@ -69,18 +71,22 @@ export class CardsComponent implements OnInit {
   }
 
   delete(id: number) {
+    if (confirm("Are you sure?") == true){
     this.servicesService.delete(id).subscribe({
       next: () => {
-        confirm('Are you sure??');
-        console.log(`Service (${id}) deleted`);
+
       },
       error: (err) => {
         console.log('Hataaa: ' + err.message);
       },
       complete: () => {
+        this.toastrService.success(`(${id}) id'li servis başarılı bir şekilde silindi...`);
         this.getServices();
       },
     });
+  }else {
+    this.toastrService.info(`İşlem iptal edildi...`,"Sistem Mesajı");
+  }
   }
   createServiceAddForm() {
     this.serviceAddForm = this.formBuilder.group({

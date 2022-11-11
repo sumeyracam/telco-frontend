@@ -5,19 +5,19 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { environment } from 'src/environments/environment';
-import { setCreateCorporateCustomerModel, } from '../store/customer/customer.actions';
+import { setCreateCorporateCustomerModel, } from '../store/customerToRegister/customer.actions';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CorporateCustomersService  {
 
-  CorporateCustomerModel$:Observable<CorporateCustomers | null>;
+  corporateCustomerModel$:Observable<CorporateCustomers | null>;
 
   private controllerUrl = `${environment.apiUrl}/corporateCustomers`;
 
   constructor(private httpClient: HttpClient,private store: Store<AppStoreState>) {
-    this.CorporateCustomerModel$ = this.store.select(
+    this.corporateCustomerModel$ = this.store.select(
       (state) => state.customer.corporateCustomerModel
     );
   }
@@ -29,8 +29,8 @@ export class CorporateCustomersService  {
     return this.httpClient.get<CorporateCustomers[]>(`${this.controllerUrl}?customerId=${id}`);
   }
 
-  createCustomer(CorporateCustomer: CorporateCustomers): Observable<CorporateCustomers> {
-    return this.httpClient.post<CorporateCustomers>(this.controllerUrl, CorporateCustomer);
+  createCustomer(corporateCustomer: CorporateCustomers): Observable<CorporateCustomers> {
+    return this.httpClient.post<CorporateCustomers>(this.controllerUrl, corporateCustomer);
   }
 
   saveCorporateCustomer(createCorporateCustomer: CorporateCustomers) {

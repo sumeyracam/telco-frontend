@@ -1,6 +1,6 @@
 import { CustomerStoreState, initialCustomerStoreState } from './customer.state';
 import { createReducer, on } from '@ngrx/store';
-import { setCreateCorporateCustomerModel, setCreateIndividualCustomerModel, setServicesModel } from './customer.actions';
+import { setCatalogsModel, setCreateCorporateCustomerModel, setCreateIndividualCustomerModel, setServicesModel } from './customer.actions';
 
 export const customerReducer = createReducer<CustomerStoreState>(
   initialCustomerStoreState,
@@ -28,6 +28,15 @@ export const customerReducer = createReducer<CustomerStoreState>(
       return {
         ...currentState,
         serviceModel: action.services,
+      };
+    }
+  ),
+  on(
+    setCatalogsModel, // yakalamak istediğim action
+    (currentState, action) => {
+      return {
+        ...currentState,
+        catalogModel: action.catalogs,
       };
     }
   )

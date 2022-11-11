@@ -105,3 +105,12 @@
 hr.solid {
   border-top: 3px solid #bbb;
 }
+@media screen and (max-width: 992px) {
+  .card-registration{
+    max-width:100%;
+    height:auto;
+  }
+  .card-img{
+    display: none;
+  }
+}

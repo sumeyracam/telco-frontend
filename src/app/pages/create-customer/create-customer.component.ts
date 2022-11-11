@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
+import { AppStoreState } from 'src/app/store/app.state';
 import { CorporateCustomers } from 'src/app/models/corporateCustomers';
 import { CorporateCustomersService } from 'src/app/services/corporate-customers.service';
 import { IndividualCustomers } from 'src/app/models/individualCustomers';
 import { IndividualCustomersService } from 'src/app/services/individual-customers.service';
-import { Service } from 'src/app/models/service';
-import { ServicesService } from 'src/app/services/services.service';
+import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { ToastrMessageService } from 'src/app/services/toastr-message.service';
 
 @Component({
@@ -16,128 +18,86 @@ import { ToastrMessageService } from 'src/app/services/toastr-message.service';
 })
 export class CreateCustomerComponent implements OnInit {
 
-  createIndividualCustomer!: FormGroup;
-  createCorporateCustomer!: FormGroup;
-  servicesForm:boolean = false;
-  isChecked:boolean = true;
-  title:string = "Select Customer Type";
-  services!: Service[];
-  serviceForm!: FormGroup;
-  stepCount:number = 0;
-  checkedServices!:any[];
+  createIndividualCustomer!: FormGroup; // individual form tanımlandı
+  createCorporateCustomer!: FormGroup; //corporate form tanımlandı
+  servicesForm:boolean = false; //ilgili service next butonuna basılmadan gösterilmesin...
+  isIndividual:boolean = true; // burada müşteri tipine göre form göstermek için değişken tanımlandı
+  title:string = "Select Customer Type"; // title dinamik olarak alınıyor değer forma göre değiştiriliyor
+  individualCustomer!:IndividualCustomers | null;
+  corporateCustomer!:CorporateCustomers | null;
+  individualCustomerModel$:Observable<IndividualCustomers | null>;
+  corporateCustomerModel$:Observable<CorporateCustomers | null>;
 
   constructor(
     private formBuilder:FormBuilder,
     private individualCustomerService:IndividualCustomersService,
     private corporateCustomerService:CorporateCustomersService,
-    private servicesService:ServicesService,
-    private toastrService:ToastrMessageService
+    private toastrService:ToastrMessageService,
+    private router:Router,
+    private store:Store<AppStoreState>
     ) {
-      this.serviceForm = formBuilder.group({
-        selectedServices:  new FormArray([])
-       });
+      this.individualCustomerModel$ = this.store.select( //Store'dan individualCustomerModel'ı alıyoruz
+      (state) => state.customer.individualCustomerModel
+    );
+    this.corporateCustomerModel$ = this.store.select(
+      (state) => state.customer.corporateCustomerModel
+    );
      }
 
   ngOnInit(): void {
-    this.createIndividualCustomerForm();
-    this.createCorporateCustomerForm();
-    this.getServices();
-
+    this.individualCustomerModel$.subscribe((res) => {
+      if(res != null) this.individualCustomer = res;
+      this.createIndividualCustomerForm(); // individual Formgroup oluşturacak metot
+    });
+    this.corporateCustomerService.corporateCustomerModel$.subscribe((res) => {
+      if(res != null) this.corporateCustomer = res; //store'dan alınan corporateCustomer ilgili değişkene atandı...
+      this.createCorporateCustomerForm(); // corporate  Formgroup oluşturacak metot
+    });
   }
 
   createIndividualCustomerForm(){
     this.createIndividualCustomer = this.formBuilder.group({
-      customerId: ['', Validators.required],
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
-      nationalIdentity: ['', [Validators.required, Validators.minLength(11), Validators.maxLength(11)]],
-      dateOfBirth:['',Validators.required]
+      firstName: [this.individualCustomer?.firstName ?? '', Validators.required],
+      lastName: [this.individualCustomer?.lastName ?? '', Validators.required],
+      nationalIdentity: [this.individualCustomer?.nationalIdentity ?? '', [Validators.required,Validators.minLength(11)]],
+      dateOfBirth:[this.individualCustomer?.dateOfBirth ?? '',Validators.required]
     });
   }
 
   createCorporateCustomerForm(){
     this.createCorporateCustomer = this.formBuilder.group({
-      customerId: ['', Validators.required],
-      companyName: ['', Validators.required],
-      taxNumber: ['', [Validators.required,Validators.minLength(8)]]
+      companyName: [this.corporateCustomer?.companyName ?? '', Validators.required],
+      taxNumber: [this.corporateCustomer?.taxNumber ?? '', [Validators.required,Validators.minLength(8)]]
     });
   }
 
-  clickCustomerOption(selectedChoice:boolean) {
-    this.isChecked = selectedChoice;
-
+  clickCustomerOption(selectedChoice:boolean) { //radio buttondan gelen değer control değerine atar
+    this.isIndividual = selectedChoice;
   }
 
-  goNextForm(){
-    if(this.isChecked && this.stepCount === 0 ){
+  goNextForm(){ // next butonuna basıldığında koşullara göre form gösterir
+    if(this.isIndividual &&  this.createIndividualCustomer.valid){ // müşteri tipine göre gösterilecek form alanı (individual)
       this.servicesForm = true;
-      this.title = "Select Services";
-      //this.store.dispatch(this.createIndividualCustomer.value);
+      this.title = "Select Catalogs";
       this.saveIndividualStore(this.createIndividualCustomer.value);
-      //console.log(this.createIndividualCustomer.value);
-      this.stepCount++;
+      this.router.navigateByUrl('/catalog-list');
 
-    }else if(!this.isChecked && this.stepCount === 0){
+    }else if(!this.isIndividual &&  this.createCorporateCustomer.valid){ // müşteri tipine göre gösterilecek form alanı (corporate)
       this.servicesForm = true;
-      this.title = "Services";
-      //this.store.dispatch(this.createIndividualCustomer.value);
+      this.title = "Select Catalogs";
       this.saveCorporateStore(this.createCorporateCustomer.value);
-      this.stepCount++;
-    }else if(this.stepCount === 1){
-      //Todo : store 'a service kaydını yap
-      //özet sayfası gösterilecek
-      this.title = "Summary"
-      this.saveServicesStore(this.serviceForm.value);
-      this.stepCount++;
+      this.router.navigateByUrl('/catalog-list');
     }else{
-      this.toastrService.error("Form alanı zorunludur","Sistem Mesajı :")
+      this.toastrService.error("Tüm alanları doldurduğunuzdan emin olun","Sistem Mesajı :")
     }
 
   }
 
-  getServices() {
-    this.servicesService.getServices().subscribe((response) => {
-      this.services = response;
-   })
-  }
-
-  onCheckboxChange(event: any) {
-
-    const selectedServices = (this.serviceForm.controls['selectedServices'] as FormArray);
-
-    if (event.target.checked) {
-      selectedServices.push(new FormControl(event.target.value));
-    } else {
-      const index = selectedServices.controls
-      .findIndex(x => x.value === event.target.value);
-      selectedServices.removeAt(index);
-    }
-  }
-
-  saveIndividualStore(customer:IndividualCustomers){
+  saveIndividualStore(customer:IndividualCustomers){//individual form değerleri oluşturulan store'a kayıt edilir..
     this.individualCustomerService.saveIndividualCustomer(customer);
-    this.individualCustomerService.individualCustomerModel$.subscribe((res) => {
-      console.log("individual :" , res);
-    });
   }
 
-  saveCorporateStore(customer:CorporateCustomers){
+  saveCorporateStore(customer:CorporateCustomers){//corporate form değerleri oluşturulan store'a kayıt edilir..
     this.corporateCustomerService.saveCorporateCustomer(customer);
-    this.corporateCustomerService.CorporateCustomerModel$.subscribe((res) => {
-      console.log("corporate :",res);
-    });
   }
-
-  saveServicesStore(services:Service){
-    this.servicesService.saveServices(services);
-    this.servicesService.serviceModel$.subscribe((res) => {
-      console.log("services :",res);
-    })
-  }
-
-
-  saveCustomer(){
-    
-  }
-
 }

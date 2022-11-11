@@ -20,8 +20,13 @@ export class FilterServicePipe implements PipeTransform {
         break;
       case "birthDay":
         return value.filter((customer: IndividualCustomers) => {
-          const [day, month, year] = customer.dateOfBirth.split('.');
+          const [year, month, day] = customer.dateOfBirth.split('-');
+          console.log(day);
+
           let date = new Date(+year, +month - 1, +day);
+          console.log("date: ",date);
+          console.log("name: ",name);
+
           return (
             date > new Date(name)
           );

@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { Service } from '../models/service';
 import { Store } from '@ngrx/store';
 import { environment } from 'src/environments/environment';
-import { setServicesModel } from '../store/customer/customer.actions';
+import { setServicesModel } from '../store/customerToRegister/customer.actions';
 
 @Injectable({
   providedIn: 'root',

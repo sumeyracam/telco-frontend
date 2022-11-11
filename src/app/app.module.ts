@@ -27,10 +27,15 @@ import { OverlayTitleComponent } from './components/overlay-title/overlay-title.
 import { ProductListComponent } from './components/product-list/product-list.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SplitPipe } from './pipes/split.pipe';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { StoreModule } from '@ngrx/store';
 import { ToastrModule } from 'ngx-toastr';
 import { TokenInterceptor } from './interceptors/token.interceptor';
 import { appReducers } from './store/app.reducer';
+import { CreateServicesComponent } from './pages/create-services/create-services.component';
+import { CreationOverviewComponent } from './pages/creation-overview/creation-overview.component';
+import { CatalogListComponent } from './pages/catalog-list/catalog-list.component';
+import { NotFoundPageComponent } from './pages/not-found-page/not-found-page.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +56,11 @@ import { appReducers } from './store/app.reducer';
     CustomerDetailComponent,
     FilterCorporateCustomersPipe,
     OverlayTitleComponent,
-    CreateCustomerComponent
+    CreateCustomerComponent,
+    CreateServicesComponent,
+    CreationOverviewComponent,
+    CatalogListComponent,
+    NotFoundPageComponent
   ],
   imports: [
     BrowserModule,
@@ -70,7 +79,10 @@ import { appReducers } from './store/app.reducer';
         }
       },
     }),
-    StoreModule.forRoot<AppStoreState>(appReducers)
+    StoreModule.forRoot<AppStoreState>(appReducers),
+    StoreDevtoolsModule.instrument({
+      autoPause: true,
+    }),
   ],
   exports: [],
   providers: [

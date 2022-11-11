@@ -44,7 +44,7 @@ export class CustomersComponent implements OnInit {
     })
     this.selectedCustomer = false;
  }
- goToAddCustomerPage() {
-  this.router.navigateByUrl('/create-customer');
+ goToAddCustomerPage() { // create customer button click event
+  this.router.navigateByUrl('/create-customer'); // router create-customer page
 }
 }

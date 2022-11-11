@@ -15,4 +15,8 @@ export class SubscriptionsService {
     return this.httpClient.get<Subscription[]>(`${this.controllerUrl}?customerId=${id}`);
   }
 
+  postSubscription(subscription: Subscription) {
+    return this.httpClient.post<Subscription>(this.controllerUrl, subscription);
+  }
+
 }

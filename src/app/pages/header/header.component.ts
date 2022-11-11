@@ -1,7 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { Router } from '@angular/router';
+import { TokenUserModel } from 'src/app/models/tokenUserModel';
+import { AuthLoginService } from 'src/app/services/auth-login.service';
+import { Observable } from 'rxjs';
+import { ToastrMessageService } from 'src/app/services/toastr-message.service';
 
 @Component({
   selector: 'app-header',
@@ -10,38 +14,47 @@ import { Router } from '@angular/router';
 })
 export class HeaderComponent implements OnInit {
 
-  isLogin: boolean = Boolean(localStorage.getItem("isLogin"));
+  isLogin!: boolean;
+
+  @Output() onLogout = new EventEmitter<void>();
+  @Output() onLogoutWithValue = new EventEmitter<string>();
+
+  tokenUserModel$: Observable<TokenUserModel | null>;
+
   constructor(
     private router: Router,
-    private localStorageService: LocalStorageService
-  ) {}
+    private authLoginService: AuthLoginService,
+    private toastrService:ToastrMessageService
+  ) {
+    this.tokenUserModel$ = this.authLoginService.tokenUserModel$;
+  }
 
   ngOnInit(): void {
-    this.subscribeToIsLoggin();
+    this.handleOnLogin();
+    //* TS tarafında subscribe olunabilir.
+    // this.tokenUserModel$.subscribe((tokenUserModel) => {
+    //   if (tokenUserModel) this.isLogin = true;
+    // });
   }
 
-  login() {
-      this.router.navigateByUrl('/login');
-      this.userLogin();
+  logout() {
+    this.authLoginService.logout();
+    // this.router.navigateByUrl('/login');
+    this.isLogin = this.authLoginService.isAuthenticated;
+    //* Event'i emit eder/tetikler.
+    this.onLogout.emit();
+    //* Event'i bir veriyle emit eder/tetikler.
+    this.onLogoutWithValue.emit('Hoşçakal, tekrar bekleriz...');
+
+    this.router.navigate(['login']);
   }
 
-  logout(){
-      this.router.navigateByUrl('/login');
-      localStorage.clear();
-      this.userLogout();
-  }
-
-  subscribeToIsLoggin() {
-    this.localStorageService.isUserLoggedIn.subscribe((isLogin) => {
-      this.isLogin = isLogin;
+  handleOnLogin(): void {
+    //* onLogin event'ine (subject) abone olduk, dolayısıyla her tetiklendiğinde ilgili event fonksiyonu çalışır.
+    this.authLoginService.onLogin.subscribe({
+      next: () => {
+        this.isLogin = this.authLoginService.isAuthenticated;
+      },
     });
-  }
-
-  userLogin() {
-    this.localStorageService.login();
-  }
-  userLogout() {
-    this.localStorageService.logout();
-    // this.isLogin = false;
   }
 }

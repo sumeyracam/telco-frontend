@@ -24,28 +24,25 @@
     <label class="mx-2">Name:</label><input type="text" name="customerName" [(ngModel)]="customerName" />
     <label class="mx-2">National Identity:</label><input type="text" name="nationalId" [(ngModel)]="nationalId" />
     <label class="mx-2">Birthday:</label><input type="date" name="dateOfBirth" [(ngModel)]="dateOfBirth" />
-    {{ dateOfBirth }}
   </form>
 
   <div class="row" *ngIf="selectedCustomer">
-    <div class="col-sm-12 col-md-3 mb-5" *ngFor="
+    <div class="col-sm-12 col-md-4 col-lg-3 mb-5" *ngFor="
         let individualCustomer of individuals
           | filterService: 'name':customerName
           | filterService: 'id':nationalId
           | filterService: 'birthDay':dateOfBirth
       " [routerLink]="'/customer-detail/' + individualCustomer.customerId">
       <div class="card">
-        <img src="assets/images/img_avatar.png" alt="Avatar" width="300" height="300" />
-        <div style="text-align: center">
+        <img src="assets/images/img_avatar.png" alt="Avatar" width="auto" height="auto" />
+        <div class="mt-2" style="text-align: center">
           <h4>
             <b>{{ individualCustomer.firstName }}
               {{ individualCustomer.lastName }}</b>
           </h4>
           <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque
-            consequuntur similique excepturi nobis, esse praesentium, blanditiis
-            ab quisquam labore ea odit dicta, quam officia repellat dolorem ut
-            optio earum amet?
+            National Identity : {{individualCustomer.nationalIdentity}} <br>
+            Birthday : {{individualCustomer.dateOfBirth | date:'dd.MM.YYYY'}}
           </p>
         </div>
       </div>
@@ -57,22 +54,19 @@
     <label class="mx-2">Tax Number:</label><input type="text" name="taxNumber" [(ngModel)]="taxNumber" />
   </form>
   <div class="row" *ngIf="!selectedCustomer">
-    <div class="col-sm-12 col-md-3 mb-5" *ngFor="
+    <div class="col-sm-12 col-md-4 col-lg-3 mb-5" *ngFor="
         let corporateCustomer of corporates
           | filterCorporateCustomers: 'companyName':companyName
           | filterCorporateCustomers: 'tax':taxNumber
       " [routerLink]="'/customer-detail/' + corporateCustomer.customerId">
       <div class="card">
-        <img src="assets/images/img_avatar.png" alt="Avatar" width="300" height="300" />
-        <div style="text-align: center">
+        <img  src="assets/images/corporate-avatar.png" alt="Avatar" width="auto" height="auto" />
+        <div  style="text-align: center" >
           <h4>
             <b>{{ corporateCustomer.companyName }}</b>
           </h4>
           <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque
-            consequuntur similique excepturi nobis, esse praesentium, blanditiis
-            ab quisquam labore ea odit dicta, quam officia repellat dolorem ut
-            optio earum amet?
+            Tax Number : {{corporateCustomer.taxNumber}}
           </p>
         </div>
       </div>

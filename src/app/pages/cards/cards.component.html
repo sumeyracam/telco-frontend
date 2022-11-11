@@ -14,7 +14,7 @@
           <h3>Add Service</h3>
           <form class="addForm" [formGroup]="serviceAddForm">
             <input formControlName="name" class="addInputText" type="text" />
-            <button class="btn btn-primary" (click)="add()">Ekle</button>
+            <button class="btn btn-primary" (click)="add()">Add</button>
 
           </form>
           <div *ngIf="error" class="alert alert-danger" role="alert" style="text-align: center;">
@@ -29,12 +29,12 @@
             <div
               class="card text-white card-has-bg click-col"
               style="
-                background-image: url('https://source.unsplash.com/600x900/?tech,street');
+                background-image: url('https://cdn.webrazzi.com/uploads/2021/08/etiya-222.png');
               "
             >
               <img
                 class="card-img d-none"
-                src="https://source.unsplash.com/600x900/?tech,street"
+                src="https://cdn.webrazzi.com/uploads/2021/08/etiya-222.png"
                 alt="Goverment Lorem Ipsum Sit Amet Consectetur dipisi?"
               />
               <div class="card-img-overlay d-flex flex-column">
